@@ -1,6 +1,6 @@
 # Strategy Pattern: Shipping Cost API
 
-A small .NET (C#) minimal API that demonstrates the **Strategy pattern**. The shipping cost is calculated by interchangeable algorithms, and the right one is chosen at runtime from the request, with no if/else or switch chain.
+A small .NET (C#) minimal API that demonstrates the **Strategy pattern**, with a Next.js + Tailwind frontend. The shipping cost is calculated by interchangeable algorithms, and the right one is chosen at runtime from the request, with no if/else or switch chain.
 
 ## How the pattern maps to the code
 
@@ -37,7 +37,7 @@ A small .NET (C#) minimal API that demonstrates the **Strategy pattern**. The sh
 Example request:
 
 ```bash
-curl -X POST http://localhost:5000/api/shipping/quote \
+curl -X POST http://localhost:5292/api/shipping/quote \
   -H 'Content-Type: application/json' \
   -d '{"method":"express","weightKg":2,"distanceKm":50}'
 ```
@@ -52,19 +52,25 @@ An unknown method, or a weight or distance that is not positive, returns `400 Ba
 
 ## Running
 
-Requires the .NET 10 SDK.
+Requires the .NET 10 SDK and, for the UI, Node 20.9 or later (Next.js 16).
 
 ```bash
-cd ShippingStrategy
-dotnet run
+# terminal 1: API on http://localhost:5292 (Swagger UI at /swagger)
+cd ShippingStrategy && dotnet run
+
+# terminal 2: UI on http://localhost:3000
+cd ShippingStrategy/ClientApp && npm install && npm run dev
 ```
 
-Swagger UI is served at `/swagger` on the port printed at startup.
+## Frontend (Next.js + React + Tailwind)
+
+The frontend lives in `ShippingStrategy/ClientApp`, the folder name the ASP.NET Core SPA templates use for a client app. It is a single-page UI in `ShippingStrategy/ClientApp/app/page.tsx` that loads the methods from the API and requests quotes. `ShippingStrategy/ClientApp/next.config.ts` rewrites `/api/*` to the backend, so the browser needs no CORS setup. Set `API_URL` if the API runs on a different address (default `http://localhost:5292`).
 
 ## Project layout
 
 ```
 ShippingStrategy/
+  ClientApp/                 Next.js app (app/page.tsx is the UI)
   Program.cs                 DI registration, endpoints, Swagger
   Strategies/                IShippingStrategy + concrete strategies
   Services/                  ShippingCalculator (the context)
